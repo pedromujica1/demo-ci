@@ -1,3 +1,57 @@
+## 2. Vias de acesso avaliadas
+
+| Via | Funciona para 2024+? | Formato | Estabilidade | Esforço | Veredito |
+|---|---|---|---|---|---|
+| A. Web service `listarreceita` | **Não.** Só devolve dados até 2018 | JSON | Parado desde 2018 | Baixo | **Descartada** |
+| B. Downloads / dados abertos | **Não.** O arquivo com os valores de receita está vazio | CSV | Parado | Baixo | **Descartada** |
+| C. Exportação do FlexPortal | **Não.** O arquivo só existe dentro da sessão | CSV | Depende da sessão | — | **Descartada** |
+| D. Raspagem da tela Vaadin | Para resolver | Para resolver | Para resolver | Para resolver | Para resolver |
+| Pistas: SEFA / outras consultas do menu | Para resolver | Para resolver | Para resolver | Para resolver | Para resolver |
+
+### 2.1 Via A — Web service
+
+**O que foi feito.** Rodamos um script que chama o endereço `.../pte/ws/receitas/listarreceita` uma vez por vez, para os anos de 2016 a 2026, nos meses 1 e 12, com o órgão 45 e sem informar órgão (44 chamadas no total).
+
+**Resultado.** Todas as chamadas responderam normalmente (HTTP 200).
+- **2016, 2017 e 2018:** trazem dados. Exemplo: janeiro/2016 devolveu 2.306 registros com o órgão 45 e 4.550 sem órgão.
+- **2019 a 2026:** todas as chamadas devolveram "Nenhum registro encontrado", com e sem órgão.
+
+**Conclusão.** O serviço está no ar, mas parou de ser alimentado em 2018. Não é problema de código de órgão, porque a consulta sem órgão também vem vazia. A resposta traz 35 campos (por exemplo `valor_estimado`, `valor_arrecadado`, `valor_suplementado`, `valor_cancelado`), que servem de base para a §3.1.
+
+**Limite do teste.** Testamos só os meses 1 e 12 e só o órgão 45.
+
+### 2.2 Via B — Downloads / dados abertos
+
+**O que foi feito.** Baixamos os arquivos de Receitas de 2023, 2024 e 2025 (7 arquivos por ano) e abrimos todos para ver quais têm dados.
+
+**Resultado.**
+
+| Ano | Arquivos com dados | Arquivos vazios |
+|---|---|---|
+| 2023 | Fonte de recursos, Grupo de fonte, Órgão, Unidade orçamentária | **Receita**, Natureza da receita, Subunidade orçamentária |
+| 2024 | Fonte de recursos, Grupo de fonte, Órgão | **Receita**, Natureza da receita, Subunidade orçamentária, Unidade orçamentária |
+| 2025 | Nenhum | Todos os 7 |
+
+**Conclusão.** Os arquivos que têm dados são só listas de apoio (órgãos, fontes etc.). O arquivo com os valores de receita (`TB_RECEITA`) está vazio nos três anos. Em 2024 até a lista de unidades orçamentárias está vazia, então nem as universidades dá para localizar por aqui.
+
+### 2.3 Via C — Exportação do FlexPortal
+
+**O que foi feito.** Acessamos a tela de receitas do portal (`https://www.transparencia.pr.gov.br/FlexPortal/#!Receitas`) e conferimos como os dados são gerados.
+
+**Resultado.** Os dados dependem da sessão: o arquivo só é gerado dentro da sessão aberta no navegador e não existe um link fixo para baixar depois.
+
+**Conclusão.** Não dá para usar a exportação como via de acesso por conta própria. Descartada.
+
+### 2.3 Conclusão parcial
+
+Nem o web service nem os arquivos de Downloads entregam receita de 2024 em diante. Sobram as vias C e D (a tela do portal), que ainda precisam ser testadas.
+
+**Via recomendada:** Para resolver · **Motivo em uma frase:** Para resolver
+
+
+
+
+
 # Demo-CI: Aula Prática sobre Servidores de Integração Contínua
 
 Este repositório descreve um roteiro prático para configuração e uso de um **Servidor de Integração Contínua**. O objetivo é proporcionar ao aluno um primeiro contato real com essa prática de desenvolvimento de software.
